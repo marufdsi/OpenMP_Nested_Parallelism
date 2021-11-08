@@ -1,2 +1,2 @@
-# OpenMP_Nested_Parallelism
+# OpenMP Nested Parallelism
 Micro benchmark for shared memory OpenMP nested parallelism
