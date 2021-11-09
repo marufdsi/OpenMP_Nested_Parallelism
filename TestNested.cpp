@@ -31,7 +31,7 @@ int main(int argc, char *argv[]){
   float a[sizeX][sizeY];
   float b[sizeX];
 //	vector<double> c(sizeX);
-  float c[sizeX];
+  float c[L][sizeX];
   int i, j, k;
   srand(time(NULL));
 //	cout<<"Start Initialization" << endl;
@@ -55,15 +55,17 @@ int main(int argc, char *argv[]){
       for(j=0; j<sizeY; ++j){
 	tmp += a[i][j]*b[i] + a[i][j];
       }
-      c[i] = tmp/k+1;
+      c[k][i] = tmp/k+1;
     }
   }
 	
   clock_gettime(CLOCK_MONOTONIC, &end);
   double time = ((end.tv_sec * 1000 + (end.tv_nsec / 1.0e6)) - (start.tv_sec * 1000 + (start.tv_nsec / 1.0e6)));
   double res = 0;
-  for(i=0; i<sizeX; ++i){
-    res += c[i]/30 + b[i]/20 + (i*2);
+  for(i=0; i<L; ++i) {
+      for (j = 0; j < sizeX; ++j) {
+          res += c[i][i] / 30 + b[j] / 20 + (i * 2);
+      }
   }
   string folderName = "Results/";
   if (mkdir(folderName.c_str(), 0777) == -1)
