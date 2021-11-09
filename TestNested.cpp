@@ -4,14 +4,27 @@
 #include <time.h>
 #include <stdlib.h>
 #include <vector>
+#include <sys/stat.h>
+#include <fstream>
 
 using namespace std;
 
-int L= 4;
-int sizeX = 100000;
-int sizeY = 10;
+/// int L= 4;
+/// int sizeX = 100000;
+/// int sizeY = 10;
 
 int main(int argc, char *argv[]){
+
+  if(argc <6){
+    cout<< "************************** Usages ***********************" << endl;
+    cout<< argv[0] << "OuterLoopSize InnerLoopSize LastLoopSize OuterThreads InnerThreads" << endl;
+    cout<< "*********************************************************" << endl;
+    return 0;
+  }
+
+  int L = (int)std::stoul(argv[1]);
+  int sizeX = (int)std::stoul(argv[2]);
+  int sizeY = (int)std::stoul(argv[3]);
   omp_set_dynamic(0);
   omp_set_nested(1);
 //	cout<< "start Program" <<endl;
@@ -29,8 +42,8 @@ int main(int argc, char *argv[]){
     b[i] = rand()%20 + 2;
   }
 //	cout<<"Initialization done" << endl;
-  int outer_threads = (int)std::stoul(argv[1]);
-  int inner_threads = (int)std::stoul(argv[2]);
+  int outer_threads = (int)std::stoul(argv[4]);
+  int inner_threads = (int)std::stoul(argv[5]);
   struct timespec start, end;
   clock_gettime(CLOCK_MONOTONIC, &start);
 #pragma omp parallel for private(i, j, k) schedule(static) num_threads(outer_threads)
@@ -52,6 +65,23 @@ int main(int argc, char *argv[]){
   for(i=0; i<sizeX; ++i){
     res += c[i]/30 + b[i]/20 + (i*2);
   }
+  string folderName = "Results/";
+  if (mkdir(folderName.c_str(), 0777) == -1)
+    std::cout << "Directory " << folderName << " is already exist" << std::endl;
+  else
+    std::cout << "Directory " << folderName << " created" << std::endl;
+  string logFileName = "Results/Log.csv";
+  std::ifstream infile(logFileName);
+  bool exist = infile.good();
+  std::ofstream log;
+  log.open(logFileName, std::ios_base::out | std::ios_base::app | std::ios_base::ate);
+  if(!exist){
+    log<< "OuterLoopSize,InnerLoopSize,LastLoopSize,TotalThreads,OuterThreads,InnerThreads,Time" <<endl;
+  }
+  infile.close();
+  log<< L << "," << sizeX << "," << sizeY << "," << omp_get_max_threads() << "," << outer_threads << "," << inner_threads << "," << time*1000  << endl;
+  log.close();
+  
   cout<< "result: " << res << " L: " << L <<  " X: " << sizeX << " Y: " << sizeY << " outer threads: " << outer_threads << " inner threads: " << inner_threads << " time: " << time*1000 << "s" << endl;
 
   return 0;

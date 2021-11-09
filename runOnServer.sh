@@ -17,10 +17,23 @@ export OMP_NUM_THREADS=48
 module load intel
 #export OMP_NESTED=true
 
-for ot in 2
+X=100000
+Y=10
+for L in 2 4 8 10 20 100 1000
 do
-	for inn in 1 12 24
-	do
-		./TestNested.o $ot $inn
-	done
+     for ot in 2
+     do
+	 for inn in 1 12 24
+	 do
+	     ./NestedOMP $L $X $Y $ot $inn
+	 done
+     done
+     for ot in 24
+     do
+	 for inn in 1 2
+	 do
+	     ./NestedOMP $L $X $Y $ot $inn
+	 done
+     done
 done
+
