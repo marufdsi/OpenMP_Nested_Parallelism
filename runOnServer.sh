@@ -19,21 +19,35 @@ module load intel
 
 X=100000
 Y=10
-for L in 2 4 8 10 20 100 1000
+for L in 10000 100000 #2 4 8 10 20 100 1000
 do
-     for ot in 2
-     do
-	 for inn in 1 12 24
-	 do
-	     ./NestedOMP $L $X $Y $ot $inn
-	 done
-     done
-     for ot in 24
+     for ot in 2 6 12 24
      do
 	 for inn in 1 2
 	 do
 	     ./NestedOMP $L $X $Y $ot $inn
 	 done
+     done
+     for ot in 2 6 12
+     do
+	 for inn in 3 4
+	 do
+	     ./NestedOMP $L $X $Y $ot $inn
+	 done
+     done
+     for ot in 2 6
+     do
+         for inn in 6 8
+         do
+             ./NestedOMP $L $X $Y $ot $inn
+         done
+     done
+     for ot in 2
+     do
+         for inn in 12 24
+         do
+             ./NestedOMP $L $X $Y $ot $inn
+         done
      done
 done
 
