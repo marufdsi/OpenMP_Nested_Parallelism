@@ -31,7 +31,7 @@ int main(int argc, char *argv[]){
   float a[sizeX][sizeY];
   float b[sizeX];
 //	vector<double> c(sizeX);
-  float c[L][sizeX];
+  float c[L];
   int i, j, k;
   srand(time(NULL));
 //	cout<<"Start Initialization" << endl;
@@ -48,15 +48,17 @@ int main(int argc, char *argv[]){
   clock_gettime(CLOCK_MONOTONIC, &start);
 #pragma omp parallel for private(i, j, k) schedule(static) num_threads(outer_threads)
   for(k=0; k<L; ++k){
-#pragma omp parallel for private(i, j) schedule(guided) num_threads(inner_threads)
+      float sum = 0;
+#pragma omp parallel for private(i, j) reduction (+:sum) schedule(guided) num_threads(inner_threads)
     for(i=0; i<sizeX; ++i){
 	    //		#pragma omp parallel for schedule(guided) num_threads(inner_threads)
       double tmp = 0;
       for(j=0; j<sizeY; ++j){
-	tmp += a[i][j]*b[i] + a[i][j];
+	    tmp += a[i][j]*b[i] + a[i][j];
       }
-      c[k][i] = tmp/k+1;
+      sum += (tmp/(k+1));
     }
+    c[k] = sum;
   }
 	
   clock_gettime(CLOCK_MONOTONIC, &end);
@@ -64,7 +66,7 @@ int main(int argc, char *argv[]){
   double res = 0;
   for(i=0; i<L; ++i) {
       for (j = 0; j < sizeX; ++j) {
-          res += c[i][j] / 30 + b[j] / 20 + (i * 2);
+          res += c[i] / 30 + b[j] / 20 + (i * 2);
       }
   }
   string folderName = "Results/";
