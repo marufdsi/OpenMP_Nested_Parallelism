@@ -64,7 +64,7 @@ int main(int argc, char *argv[]){
   double res = 0;
   for(i=0; i<L; ++i) {
       for (j = 0; j < sizeX; ++j) {
-          res += c[i][i] / 30 + b[j] / 20 + (i * 2);
+          res += c[i][j] / 30 + b[j] / 20 + (i * 2);
       }
   }
   string folderName = "Results/";
